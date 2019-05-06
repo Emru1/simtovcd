@@ -11,7 +11,8 @@
 
 int main(int argc, char** argv)
 {
-	unsigned short* bits = calloc( 93, sizeof(unsigned short) );				/* number of bits of device   */
+	//the number of device bits
+	unsigned short* bits = calloc( 93, sizeof(unsigned short) );
 
 	FILE* source = fopen( argv[1], "rt");
 	FILE* destination = fopen( argv[2], "wt");

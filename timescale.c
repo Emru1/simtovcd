@@ -11,96 +11,107 @@ void timescale(FILE* source, FILE* dest)
 	int freq = 0;
 
 	char* freqs = malloc(128);
-	char* line = malloc(LINE_SIZE);								/* work array                 */
 
-	rewind(source);												/* get second line            */
-	fgets(line, LINE_SIZE, source);								/*                            */
-	fgets(line, LINE_SIZE, source);								/*                            */
+	//array on which the function will work
+	char* line = malloc(LINE_SIZE);
+
+	//get second line to string from source file
+	rewind(source);
+	fgets(line, LINE_SIZE, source);
+	fgets(line, LINE_SIZE, source);
 
 	fprintf(dest,	"$timescale\n");
 
-	if(!(strcmp(line, "noclk\n")))								/* if there is no clock specified */
-	{															/*                                */
-		fprintf(dest,	"\t1s\n"								/*                                */
-						"$end\n"	);							/*                                */
-		free(line);												/*                                */
-		return;													/*                                */
+	//if no clock is specified in source file
+	if(!(strcmp(line, "noclk\n")))
+	{
+		fprintf(dest, "\t1s\n"
+			"$end\n" );
+		free(line);
+		return;
 	}
 
 
-	for(i = 0; *(line+i) ; i++)
+	for(i = 2; *(line+i) ; i++)
 	{
 		if( ( *(line+i-2) == 'H' ) && ( *(line+i-1) == 'z') && ( *(line+i) == '\n'))
 		{
-			switch( *(line+i-3))				/* printing multiplier to destination             */
-			{									/*                                                */
-				case 'K':						/*                                                */
-					mult = 2;					/*                                                */
-					break;						/*                                                */
-				case 'M':						/*                                                */
-					mult = 3;					/*                                                */
-					break;						/*                                                */
-				case 'G':						/*                                                */
-					mult = 4;					/*                                                */
-					break;						/*                                                */
-				default:						/*                                                */
-					mult = 1;					/*                                                */
-			}									/*                                                */
-			break;								/*                                                */
+			//print frequency multiplier to destination file
+			switch( *(line+i-3))
+			{
+				case 'K':
+					mult = 2;
+					break;
+				case 'M':
+					mult = 3;
+					break;
+				case 'G':
+					mult = 4;
+					break;
+				default:
+					mult = 1;
+			}
+			break;
 		}
 	}
 
-	while(i != 0)								/* get position of ':' after the value of freq    */
-	{											/*                                                */
-		if( *(line+i) == ':')					/*                                                */
-		{										/*                                                */
-			pos2 = i;							/*                                                */
-			break;								/*                                                */
-		}										/*                                                */
-		i--;									/*                                                */
-	}											/*                                                */
-	i--;										/*                                                */
+	//get position of ':' which is located after frequency value
+	while(i != 0)
+	{
+		if( *(line+i) == ':')
+		{
+			pos2 = i;
+			break;
+		}
+		i--;
+	}
+	i--;
 
-	for(; !pos1; i--)							/* get position of ':' before value of freq       */
-		if( *(line+i) == ':')					/*                                                */
-			pos1 = i;							/*                                                */
+	//get position of ':' which is located before frequency value
+	for(; !pos1; i--)
+		if( *(line+i) == ':')
+			pos1 = i;
 
-	for(i = pos1+1; i < pos2; i++, j++)			/* get the value of frequency and put it to array */
-		*(freqs+j) = *(line+i);					/*                                                */
-	*(freqs+j) = '\0';							/*                                                */
+	//get frequency value from source file to array
+	for(i = pos1+1; i < pos2; i++, j++)
+		*(freqs+j) = *(line+i);
+	*(freqs+j) = '\0';
 
-	freq = 1000 / atoi(freqs);					/* get frequency to int value                     */
+	//convert frequency array to integer
+	freq = 1000 / atoi(freqs);
 
-	if(freq == 1000)							/* when frequency is round 1000, decrease value   */
-	{											/* of multiplier                                  */
-		fprintf(dest, "\t1");					/*                                                */
-		mult--;									/*                                                */
+	//when frequency is round 1000, increase value of multiplier
+	if(freq == 1000)
+	{
+		fprintf(dest, "\t1");
+		mult++;/
 	}
 	else
 		fprintf(dest, "\t%d", freq);
-
-	switch(mult)								/* print proper value of time multiplier to dest  */
-	{											/*                                                */
-		case 0:									/*                                                */
-			fprintf(dest, "s\n");				/*                                                */
-			break;								/*                                                */
-		case 1:									/*                                                */
-			fprintf(dest, "ms\n");				/*                                                */
-			break;								/*                                                */
-		case 2:									/*                                                */
-			fprintf(dest, "us\n");				/*                                                */
-			break;								/*                                                */
-		case 3:									/*                                                */
-			fprintf(dest, "ns\n");				/*                                                */
-			break;								/*                                                */
-		case 4:									/*                                                */
-			fprintf(dest, "ps\n");				/*                                                */
-			break;								/*                                                */
-		case 5:									/*                                                */
-			fprintf(dest, "fs\n");				/*                                                */
-			break;								/*                                                */
-		default:								/*                                                */
-			fprintf(dest, "s\n");				/*                                                */
+	
+	//print time multiplier value to destination value
+	switch(mult)
+	{
+		case 0:
+			fprintf(dest, "s\n");
+			break;
+		case 1:
+			fprintf(dest, "ms\n");
+			break;
+		case 2:
+			fprintf(dest, "us\n");
+			break;
+		case 3:
+			fprintf(dest, "ns\n");
+			break;
+		case 4:
+			fprintf(dest, "ps\n");
+			break;
+		case 5:
+			fprintf(dest, "fs\n");
+			break;
+		default:
+			fprintf(dest, "s\n");
 	}
 
 	fprintf(dest, "$end\n");

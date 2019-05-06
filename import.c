@@ -10,43 +10,54 @@ int import(FILE* src, FILE* dest, int nvars, unsigned short* bits)
 	char* line = malloc(LINE_SIZE);
 	char *c = line;
 
+	//get third line to string from source file
 	rewind(src);
-	fgets(line, LINE_SIZE, src);							/* get to third line                    */
-	fgets(line, LINE_SIZE, src);							/*                                      */
-	fgets(line, LINE_SIZE, src);							/*                                      */
+	fgets(line, LINE_SIZE, src);
+	fgets(line, LINE_SIZE, src);
+	fgets(line, LINE_SIZE, src);
 
 
 	for(i = 0; c; i++)
 	{
 		fprintf(dest, "#%d\n", i+1);
 		g = 0;
-
-		if(*(bits+g) > 1)									/* check if first value is multibit     */
-			fprintf(dest, "b");								/*                                      */
+		
+		//check if device is multi-bit
+		if(*(bits+g) > 1)
+			fprintf(dest, "b");
 
 		for(j = 0; *(line+j); j++)
 		{
 			if(*(line+j) == '\t')
 			{
-				if(*(bits+g) > 1)							/* if multibit - add space before ident */
-					fprintf(dest, " ");						/* gtkwave doesn't read file without it */
 
-				fprintf(dest, "%c", '!' + g);				/* ident mark                           */
+				//if device is multi-bit, add space before ident
+				//GTKwave does not read properly without it
+				if(*(bits+g) > 1)
+					fprintf(dest, " ");
 
-				if(*(line+j+1) != '\n')						/*  avoid unnecesary LF                 */
-					fprintf(dest, "\n");					/*                                      */
+				//device identification char
+				fprintf(dest, "%c", '!' + g);
 
-				g++;										/* increment device number              */
+				//avoid unnecesary LF
+				if(*(line+j+1) != '\n')
+					fprintf(dest, "\n");
 
-				if(*(bits+g) > 1)							/* if multibit - add 'b'                */
-					fprintf(dest, "b");						/*                                      */
+				//increment device number
+				g++;
+
+				//if device is multi-bit, add 'b' before state values
+				if(*(bits+g) > 1)
+					fprintf(dest, "b");
 			}
 			else
-			{												/* prints next char of value            */
-				fprintf(dest, "%c", *(line+j));				/*                                      */
+			{
+				//prints next char value from string
+				fprintf(dest, "%c", *(line+j));
 			}
 		}
-
+		
+		//get next line from source file
 		c = fgets(line, LINE_SIZE, src);
 	}
 
