@@ -4,63 +4,63 @@
 
 int import(FILE* src, FILE* dest, int nvars, unsigned short* bits)
 {
-	int i = 0;
-	int j = 0;
-	int g = 0;
-	char* line = malloc(LINE_SIZE);
-	char *c = line;
+    int i = 0;
+    int j = 0;
+    int g = 0;
+    char* line = malloc(LINE_SIZE);
+    char *c = line;
 
-	//get third line to string from source file
-	rewind(src);
-	fgets(line, LINE_SIZE, src);
-	fgets(line, LINE_SIZE, src);
-	fgets(line, LINE_SIZE, src);
+    //get third line of source file to string
+    rewind(src);
+    fgets(line, LINE_SIZE, src);
+    fgets(line, LINE_SIZE, src);
+    fgets(line, LINE_SIZE, src);
 
 
-	for(i = 0; c; i++)
-	{
-		fprintf(dest, "#%d\n", i+1);
-		g = 0;
-		
-		//check if device is multi-bit
-		if(*(bits+g) > 1)
-			fprintf(dest, "b");
+    for(i = 0; c; i++)
+    {
+        fprintf(dest, "#%d\n", i+1);
+        g = 0;
 
-		for(j = 0; *(line+j); j++)
-		{
-			if(*(line+j) == '\t')
-			{
+        //check if device is multi-bit
+        if(*(bits+g) > 1)
+            fprintf(dest, "b");
 
-				//if device is multi-bit, add space before ident
-				//GTKwave does not read properly without it
-				if(*(bits+g) > 1)
-					fprintf(dest, " ");
+        for(j = 0; *(line+j); j++)
+        {
+            if(*(line+j) == '\t')
+            {
 
-				//device identification char
-				fprintf(dest, "%c", '!' + g);
+                //if device is multi-bit, add space before ident
+                //GTKwave does not read input properly without this
+                if(*(bits+g) > 1)
+                    fprintf(dest, " ");
 
-				//avoid unnecesary LF
-				if(*(line+j+1) != '\n')
-					fprintf(dest, "\n");
+                //device identification char
+                fprintf(dest, "%c", '!' + g);
 
-				//increment device number
-				g++;
+                //avoid unnecessary LF
+                if(*(line+j+1) != '\n')
+                    fprintf(dest, "\n");
 
-				//if device is multi-bit, add 'b' before state values
-				if(*(bits+g) > 1)
-					fprintf(dest, "b");
-			}
-			else
-			{
-				//prints next char value from string
-				fprintf(dest, "%c", *(line+j));
-			}
-		}
-		
-		//get next line from source file
-		c = fgets(line, LINE_SIZE, src);
-	}
+                //increment device number
+                g++;
 
-	free(line);
-	return 0;
+                //if device is multi-bit, add 'b' before state values
+                if(*(bits+g) > 1)
+                    fprintf(dest, "b");
+            }
+            else
+            {
+                //prints next char value from string
+                fprintf(dest, "%c", *(line+j));
+            }
+        }
+
+        //get next line from source file
+        c = fgets(line, LINE_SIZE, src);
+    }
+
+    free(line);
+    return 0;
 }

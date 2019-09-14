@@ -1,5 +1,4 @@
-#ifndef TIMESCALE_H
-#define TIMESCALE_H
+#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -8,5 +7,3 @@
 #include "macros.h"
 
 void timescale(FILE* source, FILE* dest);
-
-#endif

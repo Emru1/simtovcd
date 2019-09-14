@@ -1,7 +1,5 @@
-#ifndef SCOPE_H
-#define SCOPE_H
+#pragma once
 
 #include <stdio.h>
-int scope(FILE* dest);
 
-#endif
+int scope(FILE* dest);

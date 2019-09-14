@@ -25,5 +25,5 @@ vars.o: vars.c vars.h
 vars_first.o: vars_first.c vars_first.h
 	$(CC) vars_first.c -c -o vars_first.o
 
-clean:	
+clean:
 	rm main.o init.o import.o scope.o timescale.o vars.o vars_first.o

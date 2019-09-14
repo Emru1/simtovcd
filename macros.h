@@ -1,6 +1,3 @@
-#ifndef MACROS_H
-#define MACROS_H
+#pragma once
 
 #define LINE_SIZE 2048
-
-#endif
